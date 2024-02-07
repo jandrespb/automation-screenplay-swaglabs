@@ -7,7 +7,6 @@ import com.swaglab.jandcode.questions.inventory.ValidateTitlePrincipal;
 import com.swaglab.jandcode.tasks.inventory.BurgerButtonListTask;
 import com.swaglab.jandcode.utils.Constants;
 import com.swaglab.jandcode.utils.PropertiesUtils;
-import io.cucumber.java.After;
 import io.cucumber.java.Before;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -18,7 +17,7 @@ import net.serenitybdd.screenplay.actors.OnlineCast;
 import static net.serenitybdd.screenplay.GivenWhenThen.seeThat;
 import static net.serenitybdd.screenplay.actors.OnStage.theActorInTheSpotlight;
 
-public class LoginStepDefinition {
+public class LoginSteps {
     @Before
     public void previousActorBegin(){
         OnStage.setTheStage(new OnlineCast());
