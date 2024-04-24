@@ -53,7 +53,7 @@ public class JavascriptUtils {
      *
      * @return an actions that gremlins will do on actual page browser
      */
-    public static String ejecutarGremlins() {
+    public static String executeGremlins() {
         return String.format(
                 "gremlins\n" +
                         " .createHorde({\n" +
