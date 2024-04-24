@@ -30,7 +30,7 @@ public class SelectProduct implements Task {
             WebUtils.waitExplicitElement(2);
         }catch(Exception e){
             LOGGER.log(Level.WARNING, "Error! the option that you choose is not exist: " + PRODUCT.getNameProduct());
-            Serenity.reportThat("", () -> {
+            Serenity.reportThat("It's not possible choose product", () -> {
                 throw new AssertionError("Error! the option that you choose is not exist '"
                         + PRODUCT.getNameProduct() + "'");
             });
