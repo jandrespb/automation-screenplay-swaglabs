@@ -44,5 +44,4 @@ public class LoginSteps {
     public void anActorChooseBurgerButtonOption(String optionMenu) {
         theActorInTheSpotlight().wasAbleTo(BurgerButtonListTask.chooseAnOption(optionMenu));
     }
-
 }

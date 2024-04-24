@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
         features = "src/test/resources/features/",
         glue = "com.swaglab.jandcode.stepdefinitions",
         snippets = CucumberOptions.SnippetType.CAMELCASE,
-        tags = "@remove_shopping_cart"
+        tags = "@homepage_gremlins"
 )
 public class SwagLabRunner {
 }
