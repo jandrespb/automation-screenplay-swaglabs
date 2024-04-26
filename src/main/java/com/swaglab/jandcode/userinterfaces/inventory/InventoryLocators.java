@@ -14,8 +14,11 @@ public class InventoryLocators {
     public static final Target LABEL_TITLE_PRINCIPAL = Target.the("Label principal text on home page")
             .located(By.xpath("//span[text()='Products']"));
 
-    public static final Target LABEL_PRICE_PRINCIPAL = Target.the("Label price text each element")
-            .located(By.xpath("//div[@class='inventory_item_price' and text()='{0}']"));
+    public static final Target LINK_NAME_PRODUCT = Target.the("Label price text each element")
+            .locatedBy("//div[@class='inventory_item_name ' and text()='{0}']");
+
+    public static final Target LABEL_PRICE_PRODUCT = Target.the("Label price text each element")
+            .locatedBy("//div[@class='inventory_item_price' and text()='{0}']");
 
     public static final Target BUTTON_SHOPPING_CART_PRINCIPAL = Target.the("Button shopping cart")
             .locatedBy(".shopping_cart_link");
