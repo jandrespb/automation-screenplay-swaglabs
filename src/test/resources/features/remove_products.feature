@@ -14,4 +14,4 @@ Feature: Remove elements on E-commerce Swag Labs demo
 
     Examples:
       | nameProduct         | priceProduct |
-      | Saucesdsd Labs Backpack | 29.99        |
+      | Sauce Labs Onesie | 29.99        |

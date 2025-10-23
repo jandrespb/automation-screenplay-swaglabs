@@ -17,7 +17,7 @@ public class RemoveProductsSteps {
 
     @When("an actor select one item")
     public void anActorSelectOneItem(DataTable dataTable) {
-        PRODUCT_MODEL.setValueProduct(dataTable.asLists().get(0));
+        PRODUCT_MODEL.setValueProduct(dataTable.asLists().getFirst());
         theActorInTheSpotlight().attemptsTo(SelectProduct.userChoose(PRODUCT_MODEL));
     }
     @When("an actor press button shopping cart")

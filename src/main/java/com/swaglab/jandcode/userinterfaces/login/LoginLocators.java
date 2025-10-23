@@ -12,7 +12,4 @@ public class LoginLocators {
 
     public static final Target BUTTON_LOGIN = Target.the("Button to authenticate credentials of login")
             .located(By.cssSelector("input.submit-button"));
-
-    public static final Target MESSAGE_ERROR_LOGIN = Target.the("Element html h3 error message")
-            .locatedBy("//div[@class='error-message-container error']//child::h3");
 }

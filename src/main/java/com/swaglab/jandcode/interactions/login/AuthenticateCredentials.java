@@ -11,19 +11,24 @@ import net.serenitybdd.screenplay.Tasks;
 import net.serenitybdd.screenplay.actions.Click;
 import net.serenitybdd.screenplay.actions.Enter;
 
+
 public class AuthenticateCredentials implements Interaction {
+
+
     @Override
     public <T extends Actor> void performAs(T actor) {
-        actor.wasAbleTo(Enter.theValue(PropertiesUtils.getValueProperties(Constants.PATH_DATA_PROPERTIES,"username")
+        actor.wasAbleTo(Enter.theValue(PropertiesUtils.getValueProperties(Constants.PATH_DATA_PROPERTIES, "username")
                 .trim()).into(LoginLocators.INPUT_USER));
-        actor.wasAbleTo(Enter.theValue(PropertiesUtils.getValueProperties(Constants.PATH_DATA_PROPERTIES,"password")
+        actor.wasAbleTo(Enter.theValue(PropertiesUtils.getValueProperties(Constants.PATH_DATA_PROPERTIES, "password")
                 .trim()).into(LoginLocators.INPUT_PASSWORD));
         WebUtils.waitExplicitElement(2);
         actor.wasAbleTo(Click.on(LoginLocators.BUTTON_LOGIN));
+        WebUtils.waitExplicitElement(2);
         actor.attemptsTo(MessageLoginException.errorCredentials());
+
     }
 
-    public static AuthenticateCredentials addCredentials(){
+    public static AuthenticateCredentials addCredentials() {
         return Tasks.instrumented(AuthenticateCredentials.class);
     }
 }
