@@ -13,7 +13,7 @@ public class AddProduct implements Task {
     public <T extends Actor> void performAs(T actor) {
         actor.attemptsTo(Click.on(InventoryItemLocators.BUTTON_ADD_CART));
         if(InventoryItemLocators.BUTTON_REMOVE_ITEM.resolveFor(actor).getText().contains("Remove")){
-            actor.attemptsTo(Click.on(InventoryItemLocators.LINK_SHOPPING_CART));
+            actor.attemptsTo(Click.on(InventoryItemLocators.ICON_SHOPPING_CART));
             WebUtils.waitExplicitElement(2);
         }
     }

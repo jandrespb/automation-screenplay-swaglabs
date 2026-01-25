@@ -2,7 +2,7 @@ package com.swaglab.jandcode.stepdefinitions;
 
 import com.swaglab.jandcode.exceptions.inventory.PopUpInventoryException;
 import com.swaglab.jandcode.interactions.login.AuthenticateCredentials;
-import com.swaglab.jandcode.interactions.login.OpenPage;
+import com.swaglab.jandcode.interactions.pages.OpenPage;
 import com.swaglab.jandcode.questions.inventory.ValidateTitlePrincipal;
 import com.swaglab.jandcode.tasks.inventory.BurgerButtonListTask;
 import com.swaglab.jandcode.utils.Constants;

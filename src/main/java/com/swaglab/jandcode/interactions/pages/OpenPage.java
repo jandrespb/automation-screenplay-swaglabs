@@ -1,6 +1,5 @@
-package com.swaglab.jandcode.interactions.login;
+package com.swaglab.jandcode.interactions.pages;
 
-import com.swaglab.jandcode.userinterfaces.login.UrlPage;
 import net.serenitybdd.screenplay.Actor;
 import net.serenitybdd.screenplay.Interaction;
 import net.serenitybdd.screenplay.Tasks;
@@ -9,6 +8,10 @@ import net.serenitybdd.screenplay.actions.Open;
 public class OpenPage implements Interaction {
 
     private UrlPage urlPage;
+
+    public OpenPage() {
+        this.urlPage = new UrlPage();
+    }
 
     @Override
     public <T extends Actor> void performAs(T actor) {

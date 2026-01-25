@@ -12,34 +12,35 @@ import org.junit.runners.model.InitializationError;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 
 /**
  * Custom runner can find and update all files .feature before they executed
  */
 public class CustomRunner extends Runner {
-    private static final Logger LOGGER = LogManager.getLogger(CustomRunner.class.getName());
-    private final Class<CucumberWithSerenity> CUCUMBER_WITH_SERENITY_CLASS;
-    private CucumberWithSerenity CUCUMBER_WITH_SERENITY;
 
-    // Constructor
-    public CustomRunner(Class<CucumberWithSerenity> cucumberWithSerenityClass) throws InitializationError {
-        CUCUMBER_WITH_SERENITY_CLASS = cucumberWithSerenityClass;
-        CUCUMBER_WITH_SERENITY = new CucumberWithSerenity(CUCUMBER_WITH_SERENITY_CLASS);
+    private static final Logger LOGGER = LogManager.getLogger(CustomRunner.class.getName());
+    private final Class<?> testClass;
+    private CucumberWithSerenity cucumberRunner;
+
+    public CustomRunner(Class<?> testClass) throws InitializationError {
+        this.testClass = testClass;
+        this.cucumberRunner = new CucumberWithSerenity(this.testClass);
     }
 
-    private void runningMethodsAnnotate() throws InvocationTargetException, IllegalAccessException {
-        if(!BeforeSuite.class.isAnnotation()){
-            return;
-        }
-        Method[] accessMethod = this.CUCUMBER_WITH_SERENITY_CLASS.getMethods();
-        for (Method method:
-                accessMethod) {
-            Annotation[] annotation = method.getAnnotations();
-            for (Annotation item:
-                    annotation) {
-                if(item.annotationType().equals(BeforeSuite.class)) {
+    private void runningMethodsAnnotate() throws InvocationTargetException, IllegalAccessException, InstantiationException, NoSuchMethodException {
+        Method[] methods = this.testClass.getMethods();
+        Object instance = null;
+        for (Method method : methods) {
+            if (method.isAnnotationPresent(BeforeSuite.class)) {
+                boolean isStatic = Modifier.isStatic(method.getModifiers());
+                if (!isStatic) {
+                    if (instance == null) {
+                        instance = this.testClass.getDeclaredConstructor().newInstance();
+                    }
+                    method.invoke(instance);
+                } else {
                     method.invoke(null);
-                    break;
                 }
             }
         }
@@ -47,18 +48,17 @@ public class CustomRunner extends Runner {
 
     @Override
     public Description getDescription() {
-        return CUCUMBER_WITH_SERENITY.getDescription();
+        return cucumberRunner.getDescription();
     }
 
     @Override
-    public void run(RunNotifier customRunner) {
+    public void run(RunNotifier notifier) {
         try {
             runningMethodsAnnotate();
-            CUCUMBER_WITH_SERENITY = new CucumberWithSerenity(CUCUMBER_WITH_SERENITY_CLASS);
-
-        }catch (InvocationTargetException | IllegalAccessException | InitializationError e) {
-            LOGGER.info(e);
+            this.cucumberRunner = new CucumberWithSerenity(this.testClass);
+        } catch (Exception e) {
+            LOGGER.error("Error running BeforeSuite methods", e);
         }
-        CUCUMBER_WITH_SERENITY.run(customRunner);
+        cucumberRunner.run(notifier);
     }
 }

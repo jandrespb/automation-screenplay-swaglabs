@@ -11,6 +11,6 @@ public class InventoryItemLocators {
     public static final Target BUTTON_REMOVE_ITEM = Target.the("Button to remove a cart product item")
             .located(By.xpath("//button[text()='Remove']"));
 
-    public static final Target LINK_SHOPPING_CART = Target.the("Link that our product is save on cart")
+    public static final Target ICON_SHOPPING_CART = Target.the("Link-Icon that our product is save on cart")
             .located(By.cssSelector(".shopping_cart_link"));
 }
