@@ -28,6 +28,7 @@ ext {
     lombok = "1.18.20"
     assertj = "3.27.3"
     apachePoiVersion = "5.2.4"
+    jsoupVersion = "1.17.2"
 }
 
 dependencies {
@@ -47,6 +48,14 @@ dependencies {
     implementation(group: 'org.apache.commons', name: 'commons-collections4', version: '4.4')
     testImplementation("org.slf4j:slf4j-simple:2.0.17")
     testAnnotationProcessor(group: 'org.assertj', name: 'assertj-core', version: "$rootProject.ext.assertj")
+
+
+    implementation "org.apache.poi:poi-ooxml:${apachePoiVersion}"
+    implementation "org.apache.poi:poi:${apachePoiVersion}"
+
+    implementation "org.apache.poi:poi-ooxml-full:${apachePoiVersion}"
+
+    implementation "org.jsoup:jsoup:${jsoupVersion}"
 
 }
 
