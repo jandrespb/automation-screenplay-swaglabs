@@ -1,114 +1,211 @@
-# automation-screenplay-swaglabs
+# Automatización-screenplay-swaglabs
 
-Descripción
------------
+## Descripción
+
 Proyecto de automatización de pruebas que utiliza Serenity BDD con el patrón Screenplay para la demo de Swag Labs. El objetivo principal de las pruebas incluidas es comprobar flujos básicos como login, selección de productos y eliminación de productos del carrito.
 
-Funcionalidades principales
----------------------------
-- Inicio de sesión (login) en la aplicación de Swag Labs.
-- Selección de uno o varios productos.
-- Eliminación de productos seleccionados del carrito.
-- Reportes de ejecución generados por Serenity (HTML/JSON) al finalizar las pruebas.
+Además, el proyecto incluye un generador de reportes en Word que utiliza las evidencias (screenshots y pasos) generadas por Serenity.
 
-Estructura relevante
---------------------
-- `src/test/resources/features/` : Features en Gherkin.
-- `src/test/java/` : Implementación de steps, tasks, interactions, runners.
-- `src/main/java/com/.../userinterface` o `config` : PageObjects y clases de configuración (por ejemplo clases con `@DefaultUrl` o helpers de entorno).
-- `serenity.conf` / `serenity.properties` : Configuración de Serenity y entornos.
+## Funcionalidades principales
 
-Cómo identifica la página a abrir
--------------------------------
+* Inicio de sesión (login) en la aplicación de Swag Labs.
+* Selección de uno o varios productos.
+* Eliminación de productos seleccionados del carrito.
+* Reportes de ejecución generados por Serenity (HTML/JSON).
+* Generación de reportes en Word (.docx) con evidencias reales de ejecución.
+
+## Estructura relevante
+
+* `src/test/resources/features/` : Features en Gherkin.
+* `src/test/java/` : Implementación de steps, tasks, interactions, runners.
+* `src/main/java/com/.../utils/report` : Lógica de generación de reportes (Word).
+* `src/main/java/com/.../userinterface` o `config` : PageObjects y clases de configuración.
+* `serenity.conf` / `serenity.properties` : Configuración de Serenity.
+
+## Cómo identifica la página a abrir
+
 Existen dos enfoques comunes en este proyecto:
 
-1) @DefaultUrl en una clase PageObject
-- Una clase que hereda de `PageObject` puede anotarse con `@DefaultUrl("https://...")`.
-- Cuando el actor ejecuta una task que hace `Open.browserOn(new MiPagina())` o se usa algún helper de Serenity para abrir la página, Serenity utiliza esa URL como predeterminada.
-- Es una forma clara y local de fijar la URL por página.
+1. @DefaultUrl en una clase PageObject
 
-2) `serenity.conf` con entornos
-- Para manejar múltiples entornos (dev, qa, staging) es preferible usar `serenity.conf` y definir un bloque `environments { ... }` con la clave `base.url` u otra propiedad.
-- La ejecución selecciona el entorno con la propiedad `-Dserenity.environment=qa` (o mediante perfiles de Serenity).
-- Es más flexible cuando se necesitan múltiples entornos.
+* Una clase que hereda de `PageObject` puede anotarse con `@DefaultUrl("https://...")`.
+* Cuando el actor ejecuta `Open.browserOn(...)`, Serenity utiliza esa URL.
 
-Recomendación práctica:
-- Para una sola URL o para documentación rápida, `@DefaultUrl` en el PageObject está bien.
-- Si vas a probar en varios entornos, define esas URLs en `serenity.conf` y ejecuta con `-Dserenity.environment=...`.
+2. `serenity.conf` con entornos
 
-Ejecutar las pruebas
---------------------
-Desde macOS (zsh) con el wrapper de Gradle incluido en el proyecto.
-
-Ejecutar todas las pruebas:
-
-```bash
-./gradlew clean test
-```
-
-Ejecutar un runner concreto (por ejemplo `SwagLabRunner`):
-
-```bash
-./gradlew test --tests "com.swaglab.jandcode.runners.SwagLabRunner"
-```
-
-Ejecutar contra un entorno específico (usando `serenity.conf`):
+* Permite manejar múltiples entornos (dev, qa, staging).
+* Se ejecuta con:
 
 ```bash
 ./gradlew clean test -Dserenity.environment=qa
 ```
 
-Ejecutar una feature concreta (ruta relativa a resources):
+Recomendación:
+
+* Usa `@DefaultUrl` para casos simples.
+* Usa `serenity.conf` para múltiples entornos.
+
+## Ejecución de pruebas y generación de reportes
+
+### 🔹 Paso 1: Ejecutar automatización (Runner SwagLabs)
+
+Este paso ejecuta las pruebas con Cucumber + Screenplay y genera los reportes de Serenity.
 
 ```bash
-./gradlew clean test -Dserenity.features=src/test/resources/features/remove_product.feature
+./gradlew clean test aggregate
 ```
 
-(Dependiendo de la versión de Gradle/Serenity puede variar la forma exacta de filtrar features; si no funciona, usar `--tests` apuntando al runner o a la clase de prueba deseada.)
+Esto genera:
 
-Reportes
---------
-Al completar la ejecución Serenity genera los reportes en formato HTML (y otros) en una carpeta como:
+* Archivos JSON con resultados
+* Screenshots de cada paso
+* Reporte HTML
 
-- `target/site/serenity` o `build/site/serenity` (revisa cuál se crea en tu build)
+Ubicación:
 
-Abre el `index.html` dentro de esa carpeta para ver el reporte completo.
+```
+target/site/serenity/
+```
 
-Buenas prácticas sobre credenciales y datos
------------------------------------------
-- Evita poner credenciales (usuario/contraseña) directamente en los archivos feature: las features deben ser legibles y centradas en comportamiento.
-- Para datos reutilizables o no sensibles:
-  - Usa un archivo `data.properties` o `test-data.properties` dentro de `src/test/resources`.
-  - Carga propiedades desde el código de test o con la integración de Serenity.
-- Para credenciales sensibles:
-  - Usa variables de entorno o un vault/secret manager.
-  - O usa perfiles de CI con secretos inyectados en tiempo de ejecución.
-- Para pruebas dirigidas por ejemplos, usa tablas `Examples:` en las feature (Gherkin) para mantener claridad y trazabilidad.
+⚠️ Este paso es **obligatorio** para poder generar el Word.
 
-Notas sobre diseño del código
-----------------------------
-- Las clases que contienen configuración (por ejemplo URLs por defecto, helpers de entorno) son razonables en una carpeta `config` o `support` en lugar de `userinterface` si no representan elementos UI. Eso mejora la claridad. Las PageObjects y selectores deberían quedar en `userinterface`.
-- Una clase que solo hereda de `PageObject` y no tiene contenido puede estar si sirve como base común o para agrupar anotaciones (`@DefaultUrl`) — si no aporta, es mejor eliminarla o documentar su propósito.
+---
 
-Ejemplo rápido de escenario (Gherkin)
-------------------------------------
-Feature: Eliminar producto
-  Scenario: Usuario inicia sesión, selecciona y elimina un producto
-    Given que el usuario está en la página de login
-    When inicia sesión con "standard_user" y "secret_sauce"
-    And añade el producto "Sauce Labs Backpack" al carrito
-    And va al carrito y elimina el producto
-    Then el carrito debe estar vacío
+### 🔹 Paso 2: Generar reporte en Word
 
-Problemas comunes
------------------
-- NullPointer al eliminar `environments` y usar `@DefaultUrl`: puede ocurrir si existe código que asume la presencia de una propiedad de entorno; revisar dónde se lee `System.getProperty("serenity.environment")` o accesos a propiedades nulas.
-- Si la página no abre, verificar: 1) que la clase PageObject tiene `@DefaultUrl` o que `serenity.conf` tiene la URL; 2) que las Tasks usan `Open.browserOn(...)` o la API de Serenity para abrir la página; 3) que el driver está correctamente configurado.
+Una vez finalizada la ejecución anterior, se debe ejecutar la clase:
 
-Contacto / mantenimiento
-------------------------
-- Si mueves clases entre carpetas (`userinterface` -> `config`) actualiza los paquetes y los imports.
-- Mantén las URLs y credenciales fuera de los features por seguridad y claridad.
+```java
+GenerateReportWord
+```
 
+Esta clase:
 
+* Lee los archivos JSON generados por Serenity
+* Filtra un escenario específico
+* Extrae pasos e imágenes
+* Genera un documento Word con evidencias
 
+---
+
+### ⚠️ Importante sobre el escenario
+
+Para que el Word funcione correctamente:
+
+* Debes indicar manualmente el nombre del escenario en el código:
+
+```java
+String scenario = "Remove element through shopping cart";
+```
+
+* Este nombre debe coincidir EXACTAMENTE con el definido en el feature:
+
+```gherkin
+Scenario Outline: Remove element through shopping cart
+```
+
+✔️ Correcto
+❌ No usar nombres diferentes o inventados
+
+---
+
+### 📁 Ubicación del reporte Word
+
+Los archivos Word se generan automáticamente en:
+
+```
+target/evidence-reports/
+```
+
+Cada ejecución genera un archivo único con timestamp:
+
+```
+Remove_element_through_shopping_cart_20260416_184512.docx
+```
+
+---
+
+### 🧠 Cómo funciona el generador de Word
+
+El flujo interno es:
+
+1. Lee archivos `.json` desde:
+
+   ```
+   target/site/serenity
+   ```
+
+2. Filtra por nombre de escenario
+
+3. Recorre los pasos de forma recursiva:
+
+    * Solo toma nodos hoja (evita duplicados)
+
+4. Extrae:
+
+    * Descripción del paso
+    * Screenshots asociados
+
+5. Construye el documento Word con:
+
+    * Tabla de información (escenario, autor, fecha)
+    * Estado de ejecución (SUCCESS / FAILURE)
+    * Evidencias paso a paso con imágenes
+
+---
+
+## Reportes
+
+Serenity genera reportes en:
+
+```
+target/site/serenity
+```
+
+Abrir:
+
+```
+index.html
+```
+
+para visualizar el reporte completo.
+
+## Buenas prácticas sobre credenciales y datos
+
+* No incluir credenciales en features.
+* Usar `data.properties` para datos reutilizables.
+* Usar variables de entorno para datos sensibles.
+* Utilizar `Examples:` para pruebas parametrizadas.
+
+## Notas sobre diseño del código
+
+* Separar configuración (`config` o `support`) de elementos UI (`userinterface`).
+* Mantener PageObjects enfocados en interacción con la UI.
+* Documentar clases base o eliminarlas si no aportan valor.
+
+## Problemas comunes
+
+* El Word no genera evidencias:
+  → Verificar que se ejecutó primero `gradle clean test aggregate`.
+
+* El Word trae información incorrecta:
+  → Verificar que el nombre del escenario coincide exactamente.
+
+* Imágenes duplicadas:
+  → Resuelto mediante procesamiento de nodos hoja en el JSON.
+
+* Archivo Word sobrescrito:
+  → Solucionado con timestamp automático.
+
+## Contacto / mantenimiento 💡
+
+* Mantener sincronizados los nombres de escenarios entre feature y código.
+* Revisar estructura JSON si se actualiza Serenity.
+* Mantener dependencias actualizadas.
+
+---
+
+Sientete libre de configurar y mejorar el proyecto según tus necesidades. 
+¡Buena suerte con tu automatización!
+
+Jandtocode </>

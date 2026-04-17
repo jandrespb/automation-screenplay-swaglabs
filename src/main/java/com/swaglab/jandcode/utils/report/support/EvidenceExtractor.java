@@ -19,6 +19,7 @@ public abstract class EvidenceExtractor {
 
     protected List<byte[]> screenshotBytes = new ArrayList<>();
     protected List<String> stepTitles = new ArrayList<>();
+    protected String executionResult = "UNKNOWN";
 
     private final String SERENITY_REPORT_PATH = System.getProperty("user.dir") + "/target/site/serenity";
 
@@ -90,11 +91,13 @@ public abstract class EvidenceExtractor {
                     continue;
                 }
 
+                executionResult = root.path("result").asText("UNKNOWN");
+                System.out.println("📊 RESULT: " + executionResult);
+
                 System.out.println("✅ PROCESSING SCENARIO: " + scenarioName);
 
                 JsonNode testSteps = root.path("testSteps");
 
-                // 🔥 recorrer recursivamente
                 for (JsonNode step : testSteps) {
                     processStep(step);
                 }
@@ -109,7 +112,6 @@ public abstract class EvidenceExtractor {
 
         JsonNode children = step.path("children");
 
-        // 🔥 Si tiene hijos → NO procesar este nivel
         if (children.isArray() && children.size() > 0) {
             for (JsonNode child : children) {
                 processStep(child);
@@ -117,7 +119,6 @@ public abstract class EvidenceExtractor {
             return;
         }
 
-        // 🔥 SOLO nodos hoja
         String description = step.path("description").asText();
         JsonNode screenshots = step.path("screenshots");
 

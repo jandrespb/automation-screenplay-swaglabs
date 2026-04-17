@@ -56,7 +56,7 @@ public class WordReport extends EvidenceExtractor implements ReportGenerator {
         fillRow(table.getRow(3), "Date:", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")));
 
         // Logical check for status (you can pass this as a parameter too)
-        fillRow(table.getRow(4), "Execution Status:", "COMPLETED SUCCESSFULLY");
+        fillRow(table.getRow(4), "Execution Status:", mapStatus(executionResult));
     }
 
     private void fillRow(XWPFTableRow row, String label, String value) {
@@ -92,14 +92,11 @@ public class WordReport extends EvidenceExtractor implements ReportGenerator {
             folder.mkdirs();
         }
 
-        // 🔥 Limpiar nombre (evita caracteres raros)
         String safeName = name.replaceAll("[^a-zA-Z0-9]", "_");
 
-        // 🔥 Timestamp único
         String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
-        // 🔥 Nombre final del archivo
         String fileName = safeName + "_" + timestamp + ".docx";
 
         File file = new File(path + fileName);
@@ -110,6 +107,17 @@ public class WordReport extends EvidenceExtractor implements ReportGenerator {
         }
 
         document.close();
+    }
+
+    private String mapStatus(String result) {
+        if ("SUCCESS".equalsIgnoreCase(result)) {
+            return "COMPLETED SUCCESSFULLY";
+        } else if ("FAILURE".equalsIgnoreCase(result)) {
+            return "FAILED";
+        } else if ("SKIPPED".equalsIgnoreCase(result)) {
+            return "SKIPPED";
+        }
+        return "UNKNOWN";
     }
 
     private void setupPageMargins() {
