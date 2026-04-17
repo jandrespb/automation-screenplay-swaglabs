@@ -23,8 +23,9 @@ public class WordReport extends EvidenceExtractor implements ReportGenerator {
 
     @Override
     public void createDocument(String scenarioName, String author, String role) {
+
+        testJsonReading(scenarioName);
         // 1. Initialize data from the Extractor (Motor)
-        super.extractScreenshots();
 
         if (screenshotBytes.isEmpty()) {
             System.out.println("No evidence to add to Word for scenario: " + scenarioName);
@@ -83,14 +84,31 @@ public class WordReport extends EvidenceExtractor implements ReportGenerator {
     }
 
     private void saveFile(String name) throws IOException {
+
         String path = System.getProperty("user.dir") + "/target/evidence-reports/";
         File folder = new File(path);
-        if (!folder.exists()) folder.mkdirs();
 
-        try (FileOutputStream out = new FileOutputStream(path + name.replace(" ", "_") + ".docx")) {
-            document.write(out);
-            System.out.println("Word report generated at: " + path);
+        if (!folder.exists()) {
+            folder.mkdirs();
         }
+
+        // 🔥 Limpiar nombre (evita caracteres raros)
+        String safeName = name.replaceAll("[^a-zA-Z0-9]", "_");
+
+        // 🔥 Timestamp único
+        String timestamp = LocalDateTime.now()
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+
+        // 🔥 Nombre final del archivo
+        String fileName = safeName + "_" + timestamp + ".docx";
+
+        File file = new File(path + fileName);
+
+        try (FileOutputStream out = new FileOutputStream(file)) {
+            document.write(out);
+            System.out.println("✅ Word report generated: " + file.getAbsolutePath());
+        }
+
         document.close();
     }
 

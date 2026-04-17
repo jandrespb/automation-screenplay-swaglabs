@@ -9,7 +9,7 @@ public class GenerateReportWord {
 
         ReportGenerator report = new WordReport();
 
-        String scenario = "Purchase Product in SwagLabs";
+        String scenario = "Remove element through shopping cart";
         String tester = "Jandtocode";
         String role = "Senior QA Automation Engineer";
 
